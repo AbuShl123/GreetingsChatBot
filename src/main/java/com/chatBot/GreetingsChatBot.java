@@ -12,6 +12,9 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import java.util.List;
 
 public class GreetingsChatBot extends TelegramLongPollingBot {
+    static {
+        System.out.println("PROJECT STARTED. RUNNING UP CHAT BOT");
+    }
     @Override
     public String getBotUsername() {
         return "@greetings_chat_bot";
