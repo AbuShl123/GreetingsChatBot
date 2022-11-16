@@ -48,7 +48,7 @@ public class GreetingsChatBot extends TelegramLongPollingBot {
         execute(
                 SendMessage.builder()
                 .chatId(message.getChatId())
-                .text("Please, welcome our new chat member -  " + newMemberName + "!")
+                .text("Kanalımıza hoş geldiniz, - " + newMemberName + "!" + "\nSampleText")
                 .build()
         );
         System.out.println("That was executed after SendMessage");
