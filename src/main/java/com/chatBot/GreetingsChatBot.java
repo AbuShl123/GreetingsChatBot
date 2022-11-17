@@ -93,12 +93,21 @@ public class GreetingsChatBot extends TelegramLongPollingBot {
                 previous_chat_id = message.getChatId();
                 WELCOME_MESSAGE_IS_CHANGED = true;
                 break;
+
             case "/show_welcome_message":
             case "/show_welcome_message@greetings_chat_bot":
                 execute(SendMessage.builder()
                         .chatId(message.getChatId())
                         .text(WELCOMING_MESSAGE)
                         .build());
+                break;
+
+            case "/reset_to_default":
+            case "/reset_to_default@greetings_chat_bot":
+                execute(SendMessage.builder()
+                        .chatId(message.getChatId())
+                        .text("Resetting to default.. Operation was done successfully.").build());
+                resetToDefault();
                 break;
         }
     }
