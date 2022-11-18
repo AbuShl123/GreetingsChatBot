@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -17,8 +18,8 @@ import static com.chatBot.baseClasses.BotVariables.*;
 
 
 public class GreetingsChatBot extends TelegramLongPollingBot {
-    int iLiner = 0;
-    long previous_chat_id;
+    private static long previous_chat_id;
+
     static {
         System.out.println("PROJECT STARTED. RUNNING UP CHAT BOT");
     }
@@ -35,23 +36,16 @@ public class GreetingsChatBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        System.out.println(iLiner++ + ": " + "update received.");
         if (update.hasMessage()) {
-            System.out.println(iLiner++ + ": " + "update has message.");
-            System.out.println(iLiner++ + ": is from: " + update.getMessage().getFrom().getUserName() + ".");
             if (update.getMessage().hasText() && update.getMessage().hasEntities()){
-                System.out.println(iLiner++ + ": " + "handling the message which is possibly a command.");
-                handleMessage(update.getMessage());
+                handleCommandMessage(update.getMessage());
             }
             else if (update.getMessage().hasText()) {
-                System.out.println(iLiner++ + ": " + "handling the message with text only.");
                 handleSimpleMessage(update.getMessage());
             }
-            else if (update.getMessage().getNewChatMembers().get(0) != null){
-                System.out.println(iLiner++ + ": " + "Handling newly added user");
+            else if (update.getMessage().getNewChatMembers().size() > 0){
                 handleChatJoinedUser(update.getMessage());
             }
-            System.out.println(iLiner++ + ": " + "handling finished.");
         }
     }
 
@@ -74,7 +68,7 @@ public class GreetingsChatBot extends TelegramLongPollingBot {
     }
 
     @SneakyThrows
-    private void handleMessage(Message message) {
+    private void handleCommandMessage(Message message) {
         Optional<MessageEntity> messageEntity = message.getEntities().stream()
                 .filter(e -> "bot_command".equals(e.getType())).findFirst();
         if (!messageEntity.isPresent()) {
@@ -87,17 +81,26 @@ public class GreetingsChatBot extends TelegramLongPollingBot {
             case "/change_greet_message@greetings_chat_bot":
                 execute(SendMessage.builder()
                         .chatId(message.getChatId())
-                        .text("Ok, let's change the greet message. \nPlease write down a new welcoming message including $newMemberName word. \n\nFor example: \nWelcome our new chat member - $newMemberName!")
+                        .text(change_greet_message_text)
                         .build());
                 previous_chat_id = message.getChatId();
                 WELCOME_MESSAGE_IS_CHANGED = true;
                 break;
+
             case "/show_welcome_message":
             case "/show_welcome_message@greetings_chat_bot":
                 execute(SendMessage.builder()
                         .chatId(message.getChatId())
                         .text(WELCOMING_MESSAGE)
                         .build());
+                break;
+
+            case "/reset_to_default":
+            case "/reset_to_default@greetings_chat_bot":
+                execute(SendMessage.builder()
+                        .chatId(message.getChatId())
+                        .text("Resetting to default.. Operation was done successfully.").build());
+                resetToDefault();
                 break;
         }
     }
@@ -108,19 +111,16 @@ public class GreetingsChatBot extends TelegramLongPollingBot {
         User user = newUsers.get(0);
         String firstName = user.getFirstName();
         String lastName = user.getLastName();
-        StringBuilder newMemberName = new StringBuilder();
-        newMemberName.append(firstName);
-        System.out.println(iLiner++ + ": " + newMemberName + " was added.");
+        StringBuilder newMemberName = new StringBuilder(firstName);
         if (lastName != null) {
             newMemberName.append(" ").append(lastName);
         }
-        execute(
-                SendMessage.builder()
+        execute(SendMessage
+                .builder()
                 .chatId(message.getChatId())
                 .text(WELCOMING_MESSAGE.replace("$newMemberName", newMemberName))
                 .build()
         );
-        System.out.println(iLiner++ + ": ");
     }
 
     @SneakyThrows
