@@ -36,23 +36,16 @@ public class GreetingsChatBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        System.out.println(openLine() + "update received.");
         if (update.hasMessage()) {
-            System.out.println(openLine() + "update has message.");
-            System.out.println(openLine() + "is from: " + update.getMessage().getFrom().getFirstName() + ".");
             if (update.getMessage().hasText() && update.getMessage().hasEntities()){
-                System.out.println(openLine() + "handling the message which is possibly a command.");
                 handleCommandMessage(update.getMessage());
             }
             else if (update.getMessage().hasText()) {
-                System.out.println(openLine() + "handling the message with text only.");
                 handleSimpleMessage(update.getMessage());
             }
-            else if (update.getMessage().getNewChatMembers().get(0) != null){
-                System.out.println(openLine() + ": " + "Handling newly added user");
+            else if (update.getMessage().getNewChatMembers().size() > 0){
                 handleChatJoinedUser(update.getMessage());
             }
-            System.out.println(openLine() + "handling finished.");
         }
     }
 
@@ -118,19 +111,16 @@ public class GreetingsChatBot extends TelegramLongPollingBot {
         User user = newUsers.get(0);
         String firstName = user.getFirstName();
         String lastName = user.getLastName();
-        StringBuilder newMemberName = new StringBuilder();
-        newMemberName.append(firstName);
-        System.out.println(openLine() + newMemberName + " was added.");
+        StringBuilder newMemberName = new StringBuilder(firstName);
         if (lastName != null) {
             newMemberName.append(" ").append(lastName);
         }
-        execute(
-                SendMessage.builder()
+        execute(SendMessage
+                .builder()
                 .chatId(message.getChatId())
                 .text(WELCOMING_MESSAGE.replace("$newMemberName", newMemberName))
                 .build()
         );
-        System.out.println(openLine());
     }
 
     @SneakyThrows
