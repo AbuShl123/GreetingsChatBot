@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 public class BotVariables {
-    private static final String default_manner = "Kanalımıza hoş geldiniz, - $newMemberName!";
+    private static final String default_manner = "Welcome our new chat member - $newMemberName!";
 
     public static boolean WELCOME_MESSAGE_IS_CHANGED;
     public static String WELCOMING_MESSAGE;
