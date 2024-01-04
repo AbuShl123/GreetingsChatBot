@@ -13,7 +13,7 @@ public class BotVariables {
 
     static {
         WELCOMING_MESSAGE = default_manner;
-        change_greet_message_text = "Ok, let's change the greet message. \nPlease write down a new welcoming message including $newMemberName word. \n\nFor example: \nWelcome our new chat member - $newMemberName!";
+        change_greet_message_text = "Ok, let's change the greeting message. \nWrite a new message including $newMemberName variable in place where the user's name should show up. \n\nFor example: \nWelcome our new chat member - $newMemberName!";
     }
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT);
